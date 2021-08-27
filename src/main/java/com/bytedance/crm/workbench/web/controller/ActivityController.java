@@ -97,23 +97,8 @@ public class ActivityController {
 
     @RequestMapping(value = "/get1.do",method = POST,produces = "application/json;charset=utf-8")
     @ResponseBody
-    public Object editActivity(String id){
-        String json =null;
-        try {
-
-
-
-
-            json = WriteJsonUntil.printJsonFlag(true);
-        } catch (DeleteException e) {
-            e.printStackTrace();
-            String msg = e.getMessage();
-            Map<String, Object> map = new HashMap<>();
-            map.put("success", false);
-            map.put("msg", msg);
-            json = WriteJsonUntil.printJsonObj(map);
-        }
-        return json;
+    public Object editActivity(String id) {
+        return activityService.edit(id);
     }
 
 }

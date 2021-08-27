@@ -100,5 +100,25 @@ public class ActivityServiceImpl implements ActivityService {
         return json;
 
 }
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public String edit(String id) {
+        String json = null;
+        try {
+
+
+
+
+            json = WriteJsonUntil.printJsonFlag(true);
+        } catch (DeleteException e) {
+            e.printStackTrace();
+            String msg = e.getMessage();
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+        return json;
+    }
 
 }

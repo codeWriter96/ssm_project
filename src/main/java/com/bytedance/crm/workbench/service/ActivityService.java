@@ -17,4 +17,6 @@ public interface ActivityService {
     Integer queryActivityRemark(String[] id);
 
     String remove(String[] id);
+
+    String edit(String id);
 }
