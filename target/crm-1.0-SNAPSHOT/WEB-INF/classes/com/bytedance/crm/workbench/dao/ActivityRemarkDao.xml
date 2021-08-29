@@ -18,4 +18,37 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectActivityRemark" resultType="com.bytedance.crm.workbench.damain.ActivityRemark">
+        select * from tbl_activity_remark where activityId =#{activityId} order by time desc
+    </select>
+
+    <delete id="deleteRemark" >
+        delete from tbl_activity_remark where id=#{remarkId}
+    </delete>
+
+    <insert id="addRemark">
+        insert into tbl_activity_remark(
+        id,
+        noteContent,
+        createTime,
+        createBy,
+        editFlag,
+        activityId,
+        time,
+        createName
+        ) values (
+        #{id},
+        #{noteContent},
+        #{createTime},
+        #{createBy},
+        #{editFlag},
+        #{activityId},
+        #{time},
+        #{createName})
+    </insert>
+    <update id="updateRemark">
+        update tbl_activity_remark set noteContent=#{noteContent},editTime= #{editTime} ,editBy=#{editBy},editName=#{editName},editFlag=#{editFlag},time=#{time} where id=#{id}
+
+    </update>
 </mapper>

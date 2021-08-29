@@ -1,12 +1,19 @@
 package com.bytedance.crm.workbench.service.Impl;
 
+import com.bytedance.crm.exception.AddException;
 import com.bytedance.crm.exception.DeleteException;
+import com.bytedance.crm.exception.QueryException;
+import com.bytedance.crm.exception.UpdateException;
+import com.bytedance.crm.untils.DateTimeUtil;
 import com.bytedance.crm.untils.WriteJsonUntil;
+import com.bytedance.crm.workbench.damain.ActivityRemark;
 import com.bytedance.crm.workbench.dao.ActivityDao;
 import com.bytedance.crm.workbench.dao.ActivityRemarkDao;
 import com.bytedance.crm.workbench.service.ActivityService;
 import com.bytedance.crm.workbench.vo.VO_Activity;
+import com.bytedance.crm.workbench.vo.VO_Detail;
 import com.bytedance.crm.workbench.vo.VO_PageList;
+import com.bytedance.crm.workbench.vo.VO_UpdateActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -98,16 +105,42 @@ public class ActivityServiceImpl implements ActivityService {
             json = WriteJsonUntil.printJsonObj(map);
         }
         return json;
+    }
 
-}
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
-    public String edit(String id) {
+    public String queryActivityAndUser(String activityId) {
+        String json = null;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            VO_UpdateActivity vo_updateActivity =activityDao.selectActivityAndUser(activityId);
+            if(null==vo_updateActivity){
+                throw new QueryException("该条记录不存在，请重新选择");
+            }
+
+            map.put("success", true);
+            map.put("res",vo_updateActivity);
+            json = WriteJsonUntil.printJsonObj(map);
+        } catch (QueryException e) {
+            e.printStackTrace();
+            String msg = e.getMessage();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+        return json;
+    }
+
+
+    @Override
+    public String editActivityAndUser(VO_UpdateActivity vo_updateActivity) {
         String json = null;
         try {
-
-
-
+            vo_updateActivity.setEditTime(DateTimeUtil.getSysTime());
+            Integer integer = activityDao.updateActivityAndUser(vo_updateActivity);
+            if(!(integer>0)){
+                throw new UpdateException("更新失败，该条记录不存在");
+            }
 
             json = WriteJsonUntil.printJsonFlag(true);
         } catch (DeleteException e) {
@@ -118,6 +151,130 @@ public class ActivityServiceImpl implements ActivityService {
             map.put("msg", msg);
             json = WriteJsonUntil.printJsonObj(map);
         }
+        return json;
+    }
+
+    @Override
+    public Map<String, Object> getdetailActivity(String activityId) {
+        Map<String, Object> map = new HashMap<>();
+        try{
+            VO_Detail vo_detail = activityDao.selectDetail(activityId);
+            if(null==vo_detail){
+                throw new QueryException("打开失败，记录不存在");
+            }
+            String createBy= activityDao.selectUserNameCreateBy(vo_detail.getCreateBy());
+            String  editBy=activityDao.selectUserNameEditBy(vo_detail.getEditBy());
+            vo_detail.setEditBy(editBy);
+            vo_detail.setCreateBy(createBy);
+
+
+            map.put("success", true);
+            map.put("detail",vo_detail);
+        }catch (QueryException e){
+            e.printStackTrace();
+            String msg = e.getMessage();
+            map.put("success", false);
+            map.put("msg", msg);
+        }
+        return map;
+    }
+
+    @Override
+    public String queryRemark(String activityId) {
+        String json = null;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<ActivityRemark> remarkList = activityRemarkDao.selectActivityRemark(activityId);
+            if(null == remarkList){
+                throw new QueryException("无任何备注信息");
+            }
+
+
+
+            map.put("success", true);
+            map.put("remark", remarkList);
+            json = WriteJsonUntil.printJsonObj(map);
+        } catch (DeleteException e) {
+            e.printStackTrace();
+            String msg = e.getMessage();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+        return json;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public String removeRemark(String remarkId) {
+        String json =null;
+        try {
+            Integer integer =activityRemarkDao.deleteRemark(remarkId);
+            if(!(integer>0)){
+                throw new DeleteException("删除失败，记录不存在");
+            }
+            json = WriteJsonUntil.printJsonFlag(true);
+        }catch (DeleteException e){
+            e.printStackTrace();
+            String msg = e.getMessage();
+            Map<String,Object> map =new HashMap<>();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+
+        return json;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public String addRemark(ActivityRemark activityRemark) {
+        String json =null;
+
+        try {
+            if(null==activityRemark.getNoteContent()){
+                throw new AddException("添加失败,输入的内容为空");
+            }
+            Integer integer =activityRemarkDao.addRemark(activityRemark);
+            if(!(integer>0)){
+                throw new AddException("添加失败");
+            }
+            json = WriteJsonUntil.printJsonFlag(true);
+        }catch (AddException e){
+            e.printStackTrace();
+            String msg = e.getMessage();
+            Map<String,Object> map =new HashMap<>();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+
+        return json;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public String editRemark(ActivityRemark activityRemark) {
+        String json =null;
+
+        try {
+            if(null==activityRemark.getNoteContent()){
+                throw new AddException("修改失败,输入的内容为空");
+            }
+            Integer integer =activityRemarkDao.updateRemark(activityRemark);
+            if(!(integer>0)){
+                throw new AddException("修改失败");
+            }
+            json = WriteJsonUntil.printJsonFlag(true);
+        }catch (AddException e){
+            e.printStackTrace();
+            String msg = e.getMessage();
+            Map<String,Object> map =new HashMap<>();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+
         return json;
     }
 

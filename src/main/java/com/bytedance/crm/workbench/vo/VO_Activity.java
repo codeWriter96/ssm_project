@@ -14,6 +14,7 @@ public class VO_Activity {
     private String userName;
 
 
+
     public String getUserName() {
         return userName;
     }

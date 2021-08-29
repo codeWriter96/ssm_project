@@ -9,7 +9,6 @@
 
                                 <!--视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
                                 <!--注解驱动:将返回json格式设置为true&解决静态资源文件访问问题等-->

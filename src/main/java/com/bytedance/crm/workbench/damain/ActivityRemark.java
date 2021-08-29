@@ -9,6 +9,33 @@ public class ActivityRemark {
     private String editBy;//
     private String editFlag;//是否修改标记
     private String activityId;//
+    private String time;
+    private String createName;
+    private String editName;
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public String getEditName() {
+        return editName;
+    }
+
+    public void setEditName(String editName) {
+        this.editName = editName;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public ActivityRemark() {
     }

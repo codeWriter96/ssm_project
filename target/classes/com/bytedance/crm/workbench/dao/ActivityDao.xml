@@ -54,4 +54,28 @@
 
     </delete>
 
+    <select id="selectActivityAndUser" resultType="com.bytedance.crm.workbench.vo.VO_UpdateActivity">
+        select a.name,u.name as userName,a.startDate,a.endDate,a.cost,a.description from tbl_activity as a join tbl_user as u on a.owner = u.id where a.id=#{activityId}
+    </select>
+
+    <update id="updateActivityAndUser">
+        update tbl_activity set name=#{name},startDate=#{startDate},endDate =#{endDate},cost=#{cost},description=#{description},
+        editTime=#{editTime} ,editBy=#{editBy} where id=#{activityId}
+    </update>
+
+    <select id="selectDetail" resultType="com.bytedance.crm.workbench.vo.VO_Detail">
+        select
+        u.name as userName,a.id,a.name,a.startDate,a.endDate,a.cost,a.createTime,a.createBy,
+        a.editBy,a.editTime,a.description
+        from tbl_activity as a join tbl_user as u on u.id=a.owner where a.id=#{activityId}
+
+    </select>
+
+    <select id="selectUserNameEditBy" resultType="java.lang.String">
+        select name from tbl_user where id=#{editBy}
+    </select>
+
+    <select id="selectUserNameCreateBy" resultType="java.lang.String">
+        select name from tbl_user where id=#{createBy}
+    </select>
 </mapper>
