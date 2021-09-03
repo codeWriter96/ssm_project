@@ -12,6 +12,10 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <listener >
+        <listener-class>com.bytedance.crm.web.listener.ServletContext</listener-class>
+    </listener>
     <!--注册中央调度器-->
     <servlet>
         <servlet-name>dispatcherServlet</servlet-name>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--需要修改的位置，接口的全限定名称-->
+<mapper namespace="com.bytedance.crm.settings.dao.DicTypeDao">
+<select id="selectAll" resultType="com.bytedance.crm.settings.domain.DicType">
+    select * from tbl_dic_type
+</select>
+
+</mapper>

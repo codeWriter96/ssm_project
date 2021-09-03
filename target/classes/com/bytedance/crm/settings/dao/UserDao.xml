@@ -9,4 +9,7 @@
         select * from tbl_user where loginAct=#{loginAct} and loginPwd=#{loginPwd}
     </select>
 
+    <select id="selectUserName" resultType="com.bytedance.crm.settings.domain.User">
+        select name from tbl_user
+    </select>
 </mapper>

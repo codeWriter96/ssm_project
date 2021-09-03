@@ -1,13 +1,22 @@
 package com.bytedance.crm.settings;
 
 public class User {
-    private String name;
+    private String a ;
+    private Integer b;
 
-    public String getName() {
-        return name;
+    public String getA() {
+        return a;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setA(String a) {
+        this.a = a;
+    }
+
+    public Integer getB() {
+        return b;
+    }
+
+    public void setB(Integer b) {
+        this.b = b;
     }
 }

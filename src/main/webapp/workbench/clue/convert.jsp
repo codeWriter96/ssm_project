@@ -1,4 +1,5 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 String basepath = request.getScheme() + "://"
 + request.getServerName() +
@@ -19,15 +20,114 @@ String basepath = request.getScheme() + "://"
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
-	$(function(){
-		$("#isCreateTransaction").click(function(){
-			if(this.checked){
+	$(function() {
+		$("#isCreateTransaction").click(function () {
+			if (this.checked) {
 				$("#create-transaction2").show(200);
-			}else{
+			} else {
 				$("#create-transaction2").hide(200);
 			}
 		});
-	});
+
+		$(".time").datetimepicker({
+			minView: "month",
+			language: 'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "top-left"
+		});
+
+		$("#openActivity").click(function () {
+			openActivity()
+			$("#searchActivityModal").modal("show")
+		})
+
+		$("#search-name").keydown(function (event) {
+			if (event.keyCode == 13) {
+				showRelation()
+				return false
+			}
+		});
+		$("#submitActivityBtn").click(function () {
+			var $id =$("input[name=activityList]:checked").val()
+			$("#query-activityId").val($id)
+			$("#activityName").val($("#n"+$id).html())
+			$("#searchActivityModal").modal("hide")
+		})
+		$("#tansBtn").click(function () {
+			createTransaction()
+		})
+
+	})
+
+	function createTransaction() {
+		if(confirm("是否确定转换")){
+			if($("#isCreateTransaction").prop("checked")){
+				$("#transaction").submit()
+			}else {
+				$("#transaction1").submit()
+			}
+		}
+	}
+
+	function showRelation() {
+		$.ajax({
+			url:"workbench/clue/getRelationByName.do",
+			type:"get",
+			dataType:"json",
+			data:{
+				"clueId":'${param.id}',
+				"name":$("#search-name").val()
+			},
+			success:function (data) {
+				if(data.success){
+					$("#query-msg").val("查询成功")
+					var html='';
+					$.each(data.list,function (i,n) {
+						html += '<tr>'
+						html += '<td><input type="radio" name="activityList" id="'+n.id+'" value="'+n.id+'"/></td>'
+						html += '<td id="n'+n.id+'">'+n.name+'</td>'
+						html += '<td>'+n.startDate+'</td>'
+						html += '<td>'+n.endDate+'</td>'
+						html += '<td>'+n.owner+'</td>'
+						html += '</tr>'
+					})
+					$("#query-relationList").html(html)
+					var $id =$("#query-activityId").val()
+					$("#"+$id+"").prop("checked",true)
+				}
+			}
+		})
+	}
+	function openActivity() {
+		$.ajax({
+			url:"workbench/clue/getRelation.do",
+			type:"get",
+			data:{
+				"clueId":'${param.id}'
+			},
+			dataType:"json",
+			success:function (data) {
+				if(data.success){
+					html ='';
+					$.each(data.list,function (i,n) {
+						html += '<tr>'
+						html += '<td><input type="radio" name="activityList" id="'+n.id+'" value="'+n.id+'"/></td>'
+						html += '<td id="n'+n.id+'">'+n.name+'</td>'
+						html += '<td>'+n.startDate+'</td>'
+						html += '<td>'+n.endDate+'</td>'
+						html += '<td>'+n.owner+'</td>'
+						html += '</tr>'
+					})
+					$("#query-relationList").html(html)
+					var $id =$("#query-activityId").val()
+					$("#"+$id+"").prop("checked",true)
+				}
+			}
+		})
+	}
+	
 </script>
 
 </head>
@@ -47,8 +147,8 @@ String basepath = request.getScheme() + "://"
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
-						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+						    <input id="search-name" type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+						    <span  class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
 					</div>
@@ -63,36 +163,31 @@ String basepath = request.getScheme() + "://"
 								<td></td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
+						<tbody id="query-relationList">
+
+
 						</tbody>
 					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="submitActivityBtn">提交</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div id="title" class="page-header" style="position: relative; left: 20px;">
-		<h4>转换线索 <small>李四先生-动力节点</small></h4>
+		<h4>转换线索 <small>${param.fullname}${param.appellation}-${param.company}</small></h4>
+		<form id="transaction1" action="workbench/clue/convert.do" method="post">
+			<input name="clueId" value="${param.id}" hidden/>
+		</form>
 	</div>
 	<div id="create-customer" style="position: relative; left: 40px; height: 35px;">
-		新建客户：动力节点
+		新建客户：${param.company}
 	</div>
 	<div id="create-contact" style="position: relative; left: 40px; height: 35px;">
-		新建联系人：李四先生
+		新建联系人：${param.fullname}
 	</div>
 	<div id="create-transaction1" style="position: relative; left: 40px; height: 35px; top: 25px;">
 		<input type="checkbox" id="isCreateTransaction"/>
@@ -100,50 +195,46 @@ String basepath = request.getScheme() + "://"
 	</div>
 	<div id="create-transaction2" style="position: relative; left: 40px; top: 20px; width: 80%; background-color: #F7F7F7; display: none;" >
 	
-		<form>
+		<form id="transaction" action="workbench/clue/convert.do" method="post">
+			<input name="flag" value="f" hidden/>
+			<input name="clueId" value="${param.id}" hidden/>
 		  <div class="form-group" style="width: 400px; position: relative; left: 20px;">
 		    <label for="amountOfMoney">金额</label>
-		    <input type="text" class="form-control" id="amountOfMoney">
+		    <input type="text" class="form-control" id="amountOfMoney" name="money">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="tradeName">交易名称</label>
-		    <input type="text" class="form-control" id="tradeName" value="动力节点-">
+		    <input type="text" class="form-control" id="tradeName" value="xx交易" name="name">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="expectedClosingDate">预计成交日期</label>
-		    <input type="text" class="form-control" id="expectedClosingDate">
+		    <input type="text" class="form-control time" id="expectedClosingDate" name="expectedDate">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="stage">阶段</label>
-		    <select id="stage"  class="form-control">
-		    	<option></option>
-		    	<option>资质审查</option>
-		    	<option>需求分析</option>
-		    	<option>价值建议</option>
-		    	<option>确定决策者</option>
-		    	<option>提案/报价</option>
-		    	<option>谈判/复审</option>
-		    	<option>成交</option>
-		    	<option>丢失的线索</option>
-		    	<option>因竞争丢失关闭</option>
+		    <select id="stage"  class="form-control" name="stage">
+		    	<c:forEach items="${stage}" var="a">
+					<option value="${a.value}">${a.text}</option>
+				</c:forEach>
 		    </select>
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-		    <label for="activity">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#searchActivityModal" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
-		    <input type="text" class="form-control" id="activity" placeholder="点击上面搜索" readonly>
+		    <label for="activityName">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" id="openActivity" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
+		    <input type="text" class="form-control" id="activityName" placeholder="点击上面搜索" readonly>
 		  </div>
+			<input type="text" hidden id="query-activityId" value="" name="activityId"/>
 		</form>
 		
 	</div>
 	
 	<div id="owner" style="position: relative; left: 40px; height: 35px; top: 50px;">
 		记录的所有者：<br>
-		<b>zhangsan</b>
+		<b>${param.owner}</b>
 	</div>
 	<div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
-		<input class="btn btn-primary" type="button" value="转换">
+		<input class="btn btn-primary" type="button" id="tansBtn" value="转换">
 		&nbsp;&nbsp;&nbsp;&nbsp;
-		<input class="btn btn-default" type="button" value="取消">
+		<input class="btn btn-default"  type="button" onclick="window.history.back();" value="取消">
 	</div>
 </body>
 </html>

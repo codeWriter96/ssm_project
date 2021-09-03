@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bytedance.crm.workbench.dao.ClueActivityRelationDao">
+	<select id="selectRelation" resultType="com.bytedance.crm.workbench.damain.Activity">
+        select c.id as id,a.name,a.startDate,a.endDate,u.name as owner from tbl_clue_activity_relation as c
+        join tbl_activity as a on c.activityId =a.id join tbl_user u on a.owner =u.id where c.clueId=#{clueId}
+    </select>
+	
+  	<delete id="deleteRelation">
+        delete from tbl_clue_activity_relation where id =#{id}
+    </delete>
+
+    <select id="selectNoRelation" resultType="com.bytedance.crm.workbench.damain.Activity">
+        select a.id as id,a.name,a.startDate,a.endDate,u.name as owner
+        from tbl_activity as a join tbl_user u on a.owner=u.id where
+        a.id not in (select c.activityId from tbl_clue_activity_relation as c join tbl_activity as a where c.clueId=#{clueId})
+        and a.name like '%' #{name} '%'
+    </select>
+    <insert id="addRelation">
+        insert into tbl_clue_activity_relation(id,clueId,activityId) values (
+        #{id},
+        #{clueId},
+        #{activityId}
+        )
+    </insert>
+
+    <select id="selectRelationByName" resultType="com.bytedance.crm.workbench.damain.Activity">
+        select c.id as id,a.name,a.startDate,a.endDate,u.name as owner from tbl_clue_activity_relation as c
+        join tbl_activity as a on c.activityId =a.id join tbl_user u on a.owner =u.id where c.clueId=#{clueId} and a.name like '%' #{name} '%'
+    </select>
+
+    <select id="getList" resultType="com.bytedance.crm.workbench.damain.ClueActivityRelation">
+        select activityId from tbl_clue_activity_relation where clueId = #{clueId}
+    </select>
+
+    <delete id="deleteRelationByClueId">
+        delete from tbl_clue_activity_relation where clueId =#{clueId}
+    </delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

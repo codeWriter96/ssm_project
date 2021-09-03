@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,26 +62,27 @@ public class ActivityController {
 
     @RequestMapping(value = "/pagelist.do",method = GET,produces = "application/json;charset=utf-8")
     @ResponseBody
-    public Object getActivity(VO_PageList vo_pageList){
-            String json =null;
-            try {
+    public Object getActivity(VO_PageList vo_pageList,HttpServletRequest request){
 
-                Map<String, Object> res= activityService.queryActivity(vo_pageList);
+        String json =null;
+        try {
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("success", true);
-                map.put("total",res.get("total"));
-                map.put("activityList",res.get("VO_Activity"));
-                json = WriteJsonUntil.printJsonObj(map);
-            } catch (ActivityException e) {
-                e.printStackTrace();
-                String msg = e.getMessage();
-                Map<String, Object> map = new HashMap<>();
-                map.put("success", false);
-                map.put("msg", msg);
-                json = WriteJsonUntil.printJsonObj(map);
-            }
-            return json;
+            Map<String, Object> res= activityService.queryActivity(vo_pageList);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", true);
+            map.put("total",res.get("total"));
+            map.put("activityList",res.get("VO_Activity"));
+            json = WriteJsonUntil.printJsonObj(map);
+        } catch (ActivityException e) {
+            e.printStackTrace();
+            String msg = e.getMessage();
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", false);
+            map.put("msg", msg);
+            json = WriteJsonUntil.printJsonObj(map);
+        }
+        return json;
     }
 
 

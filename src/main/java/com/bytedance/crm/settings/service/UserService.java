@@ -9,4 +9,6 @@ public interface UserService {
     Map<String,Object> loginUser(LoginUser loginUser);
 
     Admin getAdminUser(String id);
+
+    String queryOwners();
 }
