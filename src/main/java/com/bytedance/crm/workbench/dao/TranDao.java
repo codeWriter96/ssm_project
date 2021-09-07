@@ -10,4 +10,6 @@ public interface TranDao {
     Integer add(Tran tran);
 
     List<Tran> selectList(VO_TransactionPageList vo_transactionPageList);
+
+    Tran selectDetail(String id);
 }

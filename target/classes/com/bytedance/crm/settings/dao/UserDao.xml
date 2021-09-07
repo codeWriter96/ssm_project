@@ -10,6 +10,6 @@
     </select>
 
     <select id="selectUserName" resultType="com.bytedance.crm.settings.domain.User">
-        select name from tbl_user
+        select id,name from tbl_user
     </select>
 </mapper>

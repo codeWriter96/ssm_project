@@ -4,12 +4,14 @@ import com.bytedance.crm.settings.dao.DicTypeDao;
 import com.bytedance.crm.settings.dao.DicValueDao;
 import com.bytedance.crm.settings.domain.DicType;
 import com.bytedance.crm.settings.domain.DicValue;
+import com.bytedance.crm.untils.WriteJsonUntil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.List;
+import java.util.*;
 
 
 public class ServletContext implements ServletContextListener {
@@ -29,6 +31,16 @@ public class ServletContext implements ServletContextListener {
             servletContext.setAttribute(code,value);
         }
 
+        Map<String,String> map = new HashMap<>();
+        ResourceBundle rb = ResourceBundle.getBundle("Stage2Possibility");
+        Enumeration<String> e = rb.getKeys();
+        while(e.hasMoreElements()){
+            String key = e.nextElement();
+            String value = rb.getString(key);
+            map.put(key,value);
+        }
+        String json = WriteJsonUntil.printJsonObj(map);
+        servletContext.setAttribute("possibility",json);
     }
 
     @Override

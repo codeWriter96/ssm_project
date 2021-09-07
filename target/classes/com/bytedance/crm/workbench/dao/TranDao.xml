@@ -51,7 +51,7 @@
         from tbl_tran as t
         join tbl_customer as c on t.customerId=c.id
         join tbl_user as u on t.owner=u.id
-        join tbl_contacts as co on t.contactsId=co.id
+        left join tbl_contacts as co on t.contactsId=co.id
         left join tbl_activity as a on t.activityId=a.id
         <where>
             <if test="owner!=null and owner !=''">
@@ -77,6 +77,16 @@
             </if>
         </where>
         order by t.createTime desc limit #{skipCount} , #{pageSizeInt}
+    </select>
+    <select id="selectDetail" resultType="com.bytedance.crm.workbench.damain.Tran">
+        select t.id,u.name as owner,t.money,t.name,t.expectedDate,c.name as customerId,t.stage,t.type,t.source,a.name as activityId,co.fullname as contactsId,
+        t.createBy,t.createTime,t.editBy,t.editTime,t.description,t.contactSummary,t.nextContactTime
+        from tbl_tran as t
+        join tbl_customer as c on t.customerId=c.id
+        join tbl_user as u on t.owner=u.id
+        left join tbl_contacts as co on t.contactsId=co.id
+        left join tbl_activity as a on t.activityId=a.id
+        where t.id=#{id}
     </select>
 </mapper>
 

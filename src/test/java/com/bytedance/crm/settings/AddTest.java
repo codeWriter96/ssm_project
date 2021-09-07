@@ -6,10 +6,13 @@ public class AddTest {
 
     @Test
     public void AddTest01(){
-        User u = new User();
-        u =null;
-        //u.setA("a");
-        u.setB(12212);
+       for(int i=0;i<4;i++){
+           if(i==2){
+               break;
+           }
+           System.out.println(1111);
+           System.out.println(i);
+       }
     }
 
 }

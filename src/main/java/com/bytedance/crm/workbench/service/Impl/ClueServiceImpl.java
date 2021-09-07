@@ -32,17 +32,17 @@ public class ClueServiceImpl implements ClueService {
     @Autowired
     private CustomerDao customerDao;
     @Autowired
-    ClueRemarkDao clueRemarkDao;
+    private ClueRemarkDao clueRemarkDao;
     @Autowired
-    CustomerRemarkDao customerRemarkDao;
+    private CustomerRemarkDao customerRemarkDao;
     @Autowired
-    ContactsRemarkDao contactsRemarkDao;
+    private ContactsRemarkDao contactsRemarkDao;
     @Autowired
-    ContactsActivityRelationDao contactsActivityRelationDao;
+    private ContactsActivityRelationDao contactsActivityRelationDao;
     @Autowired
-    TranDao tranDao;
+    private TranDao tranDao;
     @Autowired
-    TranHistoryDao tranHistoryDao;
+    private TranHistoryDao tranHistoryDao;
 
 
     @Transactional(propagation = Propagation.REQUIRED)

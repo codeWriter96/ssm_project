@@ -35,6 +35,13 @@
         #{address}
         )
     </insert>
+    <select id="selectCustomerName" resultType="java.lang.String">
+        select id from tbl_customer where name =#{customerId}
+    </select>
+
+    <select id="selectCustomerNameList" resultType="java.lang.String">
+        select name from tbl_customer where name  like '%' #{name} '%'
+    </select>
 </mapper>
 
 
