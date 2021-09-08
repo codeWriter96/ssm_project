@@ -78,4 +78,10 @@
     <select id="selectUserNameCreateBy" resultType="java.lang.String">
         select name from tbl_user where id=#{createBy}
     </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(*) from tbl_activity
+    </select>
+    <select id="selectNamesAndCount" resultType="com.bytedance.crm.workbench.vo.VO_ActivitiyCounts">
+        select name,count(*) as value from tbl_activity group by name order by value desc;
+    </select>
 </mapper>

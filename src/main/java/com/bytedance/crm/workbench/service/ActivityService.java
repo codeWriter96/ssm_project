@@ -37,4 +37,6 @@ public interface ActivityService {
     String addRemark(ActivityRemark activityRemark);
 
     String editRemark(ActivityRemark activityRemark);
+
+    String getCounts();
 }

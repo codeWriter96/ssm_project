@@ -177,4 +177,10 @@ public class ActivityController {
 
         return activityService.editRemark(activityRemark);
     }
+
+    @RequestMapping(value = "/getCounts.do",method = GET,produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public Object getCounts() {
+        return activityService.getCounts();
+    }
 }

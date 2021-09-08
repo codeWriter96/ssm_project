@@ -1,9 +1,6 @@
 package com.bytedance.crm.workbench.dao;
 
-import com.bytedance.crm.workbench.vo.VO_Activity;
-import com.bytedance.crm.workbench.vo.VO_Detail;
-import com.bytedance.crm.workbench.vo.VO_PageList;
-import com.bytedance.crm.workbench.vo.VO_UpdateActivity;
+import com.bytedance.crm.workbench.vo.*;
 
 import java.util.List;
 
@@ -26,4 +23,8 @@ public interface ActivityDao {
     String selectUserNameEditBy(String editBy);
 
     String selectUserNameCreateBy(String createBy);
+
+    Integer countAll();
+
+    List<VO_ActivitiyCounts> selectNamesAndCount();
 }

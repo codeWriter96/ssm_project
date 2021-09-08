@@ -10,10 +10,7 @@ import com.bytedance.crm.workbench.damain.ActivityRemark;
 import com.bytedance.crm.workbench.dao.ActivityDao;
 import com.bytedance.crm.workbench.dao.ActivityRemarkDao;
 import com.bytedance.crm.workbench.service.ActivityService;
-import com.bytedance.crm.workbench.vo.VO_Activity;
-import com.bytedance.crm.workbench.vo.VO_Detail;
-import com.bytedance.crm.workbench.vo.VO_PageList;
-import com.bytedance.crm.workbench.vo.VO_UpdateActivity;
+import com.bytedance.crm.workbench.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -276,6 +273,29 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         return json;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public String getCounts() {
+        //获取总count
+        Integer integer = activityDao.countAll();
+        //获取各个name的count
+        List<VO_ActivitiyCounts> list =  activityDao.selectNamesAndCount();
+        for(int i=0;i<list.size();i++){
+            VO_ActivitiyCounts vo_activitiyCounts = new VO_ActivitiyCounts();
+            Integer temp1 = list.get(i).getValue();
+            String temp2 = list.get(i).getName();
+            float res = (float)temp1/integer;
+            Integer temp3 = Math.round(res*100) ;
+            vo_activitiyCounts.setName(temp2);
+            vo_activitiyCounts.setValue(temp3);
+            list.set(i,vo_activitiyCounts);
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("total",integer);
+        map.put("list",list);
+        return  WriteJsonUntil.printJsonObj(map);
     }
 
 }
